@@ -1,0 +1,37 @@
+{% extends "base.html.twig" %}
+{% block body %}
+
+    <div class="col-5">
+        <table class="table table-bordered">
+            <caption>Panier</caption>
+            <thead>
+            <tr><th>Nom du Produit</th><th>quantite</th><th>prix</th><th>prix total</th><th></th><th>supprimer</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% if panier is defined %}
+                {% for produit in panier %}
+                    <td>{{ produit.produitId.nom }}</td><td>{{ produit.quantite }}</td><td>{{ produit.prix}}</td>
+                    <td>{{ (produit.quantite * produit.prix)|number_format(2,'.',',') }}</td><td></td>
+                    <form action="{{ path('ProduitClientPanier.delete') }}" method="post">
+                        <input type="hidden" name="_method" value="DELETE"/>
+                        <td>
+                            <input hidden name="produitId" value="{{ produit.id }}"/>
+                            <button type="submit" class="btn btn-primary">Supprimer</button>
+                        </td>
+                    </form>
+                    </tr>
+                {% endfor %}
+            {% else %}
+                <tr class="table-warning"><td>Pas de Produits dans le panier</td></tr>
+            {% endif %}
+            </tbody>
+        </table>
+        {% if prixTotal is defined %}
+            <td>{{ prixTotal }}</td>
+        {% endif %}
+        <form action="{{ path('Panier.valid') }}">
+            <button class="btn btn-primary">Valider</button>
+        </form>
+    </div>
+{% endblock %}

@@ -1,0 +1,114 @@
+{% extends "base.html.twig" %}
+{% block body %}
+
+	<h1> Projet 2 web : site de vente Espace client </h1>
+
+	<div class="row">
+
+		<div class="col-7">
+
+			<table class="table table-bordered">
+				<caption>Produits</caption>
+				<thead>
+				<tr><th>nom</th><th>stock</th><th>type</th><th>prix</th><th>photo</th><th>Ajouter</th>
+				</tr>
+				</thead>
+
+
+			<tbody>
+
+			{% if produits is defined %}
+				{% for produit in produits %}
+					{#<script language="JavaScript">
+						var nbProduitsSelect = 0;
+                        var stocks = 0 ;
+                        stocks = {{ produit.stock }};
+
+                        function moins() {
+                            while ( nbProduitsSelect > 0){
+                                nbProduitsSelect--;
+                                stocks++;
+                            }
+                        }
+                        function plus() {
+                            while (nbProduitsSelect<=stocks){
+                                nbProduitsSelect++;
+                                stocks--;
+                            }
+                        }
+
+                        var i=1;
+                        function increase() { if(i<=stocks){ i++; stocks--;} document.getElementById('Counter').value= +i;}
+                        function decrease() { if(i>1) {i--; stocks++;} document.getElementById('Counter').value= +i;}
+
+					</script>#}
+
+						<td>{{produit.nom}}</td>
+						<td>{{produit.stock}}</td><td>{{produit.typeProduitId.libelle | default('pas de type')}}</td><td>{{ produit.prix }} €</td>
+						<td><img style="width:40px;height:40px" src="{{asset('images/')}}{{produit.photo}}" alt="image de {{produit.nom}}" ></td>
+						<form method="post" action="{{ path('Panier.verifAdd') }}">
+							<td>
+								{% if produit.stock > 0 %}
+									<input hidden name="produitId" value="{{ produit.id }}"/>
+                            		{#<label>nombre produits à ajouter</label>
+                            		<input type="button" value="-" onclick="decrease()">#}
+									{#<input name="nbProduitSelect" #}{#value="#}{##}{#{{ nbProduitsSelect }}#}{##}{#"#}{# value="initial" id="nbProduitsSelect" type="text" size="1"/>#}
+									{#<input type="text" id="Counter" name="Score" value="1" size="1"/>
+									<input type="button" value="+" onclick="increase()">#}
+									<button type="submit" class="btn btn-primary">ajouter</button>
+								{% endif %}
+							</td>
+						</form>
+					</tr>
+
+				{% endfor %}
+            {% else %}
+				<tr class="table-warning"><td>Pas de Produits</td></tr>
+			{% endif %}
+			</tbody>
+			</table>
+		</div>
+
+		<div class="col-5">
+			<table class="table table-bordered">
+				<caption>Panier</caption>
+				<thead>
+				<tr><th>Nom du Produit</th><th>quantite</th><th>prix</th><th>prix total</th><th></th><th>supprimer</th>
+				</tr>
+				</thead>
+				<tbody>
+					{% if panier is defined %}
+						{% for produit in panier %}
+							{% if id == produit.userId.getId() %}
+							<td>{{ produit.produitId.nom }}</td><td>{{ produit.quantite }}</td><td>{{ produit.prix}}</td>
+							<td>{{ (produit.quantite * produit.prix)|number_format(2,'.',',') }}</td><td></td>
+							<form action="{{ path('ProduitClientPanier.delete') }}" method="post">
+								<input type="hidden" name="_method" value="DELETE"/>
+								<td>
+									<input hidden name="produitId" value="{{ produit.id }}"/>
+									<button type="submit" class="btn btn-primary">Supprimer</button>
+								</td>
+							</form>
+							</tr>
+							{% endif %}
+						{% endfor %}
+					{% else %}
+						<tr class="table-warning"><td>Pas de Produits dans le panier</td></tr>
+					{% endif %}
+				</tbody>
+			</table>
+			<td>Prix Total : {{ prixTotal }} €</td>
+			<form action="{{ path('Panier.valid') }}">
+				<button class="btn btn-primary">Valider</button>
+			</form>
+		</div>
+	</div>
+
+{% endblock %}
+
+
+
+
+
+
+

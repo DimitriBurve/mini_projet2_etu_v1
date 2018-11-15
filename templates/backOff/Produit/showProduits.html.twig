@@ -1,0 +1,31 @@
+{% extends "base.html.twig" %}
+{% block body %}
+	<div class="row">
+		<a href="{{ path('produit.add') }}"  class="btn btn-primary m-1 p-1"> Ajouter un produit </a>
+
+		<table class="table table-bordered">
+			<caption>Recapitulatifs des produits</caption>
+			<thead>
+			<tr><th>nom</th><th>id</th><th>type</th><th>prix</th><th>nom photo</th><th>photo</th>
+					<th>opération</th>
+			</tr>
+			</thead>
+			<tbody>
+			{% for produit in produits if produit is not empty %}
+
+				<tr>
+					<td>{{produit.nom}}</td><td>{{produit.id}}</td><td>{{produit.TypeProduitId.libelle  | default('pas de type')}}</td><td>{{produit.prix}}</td><td>
+						{{produit.photo}}</td><td>
+						<img style="width:40px;height:40px" src="{{asset('images/')}}{{produit.photo}}" alt="image de {{produit.nom}}" >
+					</td>
+					<td>
+						<a href="{{ path('produit.edit', {id: produit.id}) }}"  class="btn btn-primary m-1 p-1">modifier</a>
+						<a href="{{ path('produit.delete', {id: produit.id}) }}"  class="btn btn-primary m-1 p-1">supprimer</a>
+					</td>
+				</tr>
+			{% endfor %}
+			<tbody>
+		</table>
+	</div>
+{% endblock %}
+

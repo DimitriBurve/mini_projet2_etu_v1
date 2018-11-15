@@ -1,0 +1,114 @@
+
+/****************************************** zone menu*/
+nav
+{
+    position:absolute; top:2%; left:2%;visibility:visible; width:96%; height:40px;
+    border-bottom: 2px solid Black;z-index:5;
+    font-size: 14px;
+    margin-right:5px;
+
+}
+.titreMenu {
+    height: 40px;
+
+}
+.dropdown-menu {
+    display:block;
+    float: left;
+    width: 200px;
+    height: 40px;
+    background-color: #EEEEEE;
+    border: 1px solid Black;
+    margin-left: 40px;
+    text-align: center;
+    vertical-align:middle;
+    z-index:7;
+    overflow: hidden;  /*important*/
+}
+
+.dropdown-menu:hover {
+    height: auto;
+    cursor: pointer;
+    background-color: #CCCCDE;
+}
+
+.dropdown-menu li {
+    display: block;
+    height: 40px;
+    border: 1px solid Black;
+    background-color: #EEEEEE;
+    z-index:8;
+    color:black;
+    vertical-align:middle;
+    text-decoration:none;
+}
+.dropdown-menu li:hover {
+    background:#CCCCEE;
+}
+
+/****************************************** zone de travail*/
+div.row, .container
+{
+    position:absolute; top:15%; left:25%; visibility:visible; width:85%; z-index:4;
+
+}
+
+/******************************************  tableau */
+table.tableau-produit, table.tableau-stock{ 	width:40%;
+    border:solid  5px blue;
+    border-collapse:collapse;
+    text-align:center;
+    /*	margin-left:auto;
+        margin-right:auto;*/
+    margin-bottom:2cm;
+}
+
+table.tableau-produit caption,table.tableau-stock caption{
+    margin-left:auto;
+    margin-right:auto;
+    margin-bottom:5px;
+    color:blue;
+}
+table.tableau-produit thead,table.tableau-stock thead{
+    color:purple;
+    background-color:lightblue;
+}
+table.tableau-produit img,table.tableau-stock img{
+    width:20px; height:20px; border:none;margin-left:10px;
+    margin-right:auto;}
+table.tableau-produit th,table.tableau-stock th{border:solid red 2px;}
+table.tableau-produit td,table.tableau-stock td{border:solid green 1px;}
+
+/******************************************  formulaire */
+fieldset
+{
+    max-width:500px;
+}
+label
+{
+    text-align:right;
+    display:inline;
+    width:250px;
+}
+input
+{
+    display:block;
+    width:150px;
+}
+span.erreur,div#stock_formulaire span.erreur
+{
+    display:inline;
+}
+input[type=submit]{
+    margin-top: 10px;
+    width: 100px;
+}
+input[type=radio]{
+    display: inline;
+    width: auto;
+}
+.alert {
+    display: block;
+    color :red;
+    margin: 5px;
+}

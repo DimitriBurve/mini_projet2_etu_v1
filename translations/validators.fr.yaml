@@ -1,0 +1,16 @@
+produit.nom.not_blank: Le champ pour le nom du produit ne doit pas être vide
+produit.nom.length.min: Le nom du produit doit avoir une taille minimum de {{ limit }} caractères
+produit.nom.length.max: Le nom du produit doit avoir une taille maximum de  {{ limit }} caractères
+produit.photo.not_blanck: Le champ pour la photo ne doit pas être vide
+produit.photo.length.min: Le nom doit avoir une taille minimum de {{ limit }} caractères
+produit.photo.length.max: Le nom doit avoir une taille maximum de  {{ limit }} caractères
+produit.stock.not_blank: Le champ pour le stock ne doit pas être vide
+produit.stock.numeric: Le champ pour le stock doit être un nombre
+produit.stock.range: Le valeur pour le stock ne doit pas dépasser 999999
+produit.typeProduit.not_blank: Le champ pour le département ne doit pas être vide
+
+produit.prix.not_blank: Le champ pour le prix du produit ne doit pas être vide
+
+typeProduit.libelle.not_blank: Le champ pour le nom du type de Produit ne doit pas être vide
+typeProduit.libelle.length.min: Le nom du type de Produit doit avoir une taille minimum de {{ limit }} caractères
+typeProduit.libelle.length.max: Le nom du type de Produi tdoit avoir une taille maximum de  {{ limit }} caractères
