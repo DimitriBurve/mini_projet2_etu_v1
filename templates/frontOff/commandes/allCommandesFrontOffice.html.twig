@@ -1,0 +1,31 @@
+{% extends "base.html.twig" %}
+{% block body %}
+{#affiche id dtae prix et etat
+    + bouton détails#}
+    <div class="col-4">
+        <table class="table table-bordered">
+            <caption>Commandes</caption>
+            <thead>
+            <tr><th>Numero commande</th><th>Date</th><th>prix total</th><th></th><th>Details</th>
+            </tr>
+            </thead>
+            <tbody>
+                {% if commandes is defined %}
+                    {% for commande in commandes %}
+                        {% if id == commande.userId.id %}
+                            <td>{{ commande.id }}</td><td>{{ commande.date |date('d/m/Y') }}</td><td>{{ commande.getPrixTotal() }}</td><td></td>
+                            <form action="{#{ path('CommandeClient.details') }#}" method="post">
+                                <td>
+                                    <input hidden name="commandeId" value="{{ commande.id }}"/>
+                                    <button type="submit" class="btn btn-primary">Details</button>
+                                </td>
+                            </form>
+                        {% endif %}
+                    {% endfor %}
+                {% else %}
+                    <p>Vous n'avez pas passé de commandes encore</p>
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}

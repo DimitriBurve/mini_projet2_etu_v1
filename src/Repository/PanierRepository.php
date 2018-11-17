@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Entity\Panier;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\Query\Expr\Join;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 
 /**
@@ -48,5 +49,8 @@ class PanierRepository extends ServiceEntityRepository
     }
     */
 
+   /* public function findByDate($dateFin){
+        return $this->createQueryBuilder('p');
+    }*/
 
 }

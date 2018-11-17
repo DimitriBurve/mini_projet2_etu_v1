@@ -52,6 +52,10 @@ class Panier
      */
     private $quantite;
 
+    /**
+     * @ORM\Column(name="valid", type="boolean",nullable=true)
+     */
+    private $valid;
 
     public function getId()
     {
@@ -124,5 +128,21 @@ class Panier
         $this->quantite = $quantite;
         return $this;
     }
+
+    /**
+     * @return mixed
+     */
+    public function getValid()
+    {
+        return $this->valid;
+    }
+
+    public function setValid($valid): self
+    {
+        $this->valid = $valid;
+        return $this;
+    }
+
+
 
 }

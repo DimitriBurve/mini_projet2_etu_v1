@@ -42,6 +42,7 @@ class ClientController extends Controller
         return $this->redirectToRoute('ProduitsClient.show');
     }
 
+
     /**
      * @Route("/produitsClient/show", name="ProduitsClient.show")
      */
@@ -51,22 +52,19 @@ class ClientController extends Controller
         return new Response($twig->render('frontOff/Produit/showProduits.html.twig', ['produits' => $produits, 'nbProduitsSelect' => $nbProduitsSelect]));
     }
 
+
     /**
      * @Route("/verifAddPanier", name="Panier.verifAdd",methods={"POST"})
      */
     public function verifAddPanier(Request $request, Environment $twig, RegistryInterface $doctrine, ObjectManager $manager){
 
         $entityManager = $this->getDoctrine()->getManager();
-
         $id=htmlspecialchars($_POST['produitId']);
-
         $produit= $doctrine->getRepository(Produit::class)->find($id);
-        $panier=$entityManager->getRepository(Panier::class)->findOneBy(['produitId' => $id, 'userId' =>$this->getUser()->getId()]);
-
+        $panier=$entityManager->getRepository(Panier::class)->findOneBy(['produitId' => $id, 'userId' =>$this->getUser()->getId(),'valid'=>null]);
         $prix=$produit->getPrix();
 
         if (!$panier){
-
             $panier = new Panier();
             $panier->setPrix($prix);
             $panier->setProduitId($produit);
@@ -85,6 +83,7 @@ class ClientController extends Controller
             $manager->flush();
 
             return $this->redirectToRoute('index.index');
+
         }else{
             $panier->setQuantite($panier->getQuantite()+1);
 
@@ -100,19 +99,17 @@ class ClientController extends Controller
         return $this->redirectToRoute('index.index');
     }
 
+
     /**
      * @Route("/produitClientDeletePanier", name="ProduitClientPanier.delete")
      */
     public function deleteProduitClient(Request $request, Environment $twig, RegistryInterface $doctrine, ObjectManager $manager){
         $entityManager = $this->getDoctrine()->getManager();
-
         $id=htmlspecialchars($_POST['produitId']);
-
         $panier=$entityManager->getRepository(Panier::class)->find($id);
         $produit= $doctrine->getRepository(Produit::class)->find($panier->getProduitId());
-
-
         $quantite = $panier->getQuantite();
+
         if ($panier->getQuantite()-1 != 0) {
             $panier->setQuantite($panier->getQuantite() - 1);
         }else{
@@ -126,34 +123,110 @@ class ClientController extends Controller
         return $this->redirectToRoute('index.index');
     }
 
+
     /**
      * @Route("/show/PanierClient", name="panier.show")
      */
     public function showPanierClient(Request $request, Environment $twig, RegistryInterface $doctrine, ObjectManager $manager){
-        $panier=$doctrine->getRepository(Panier::class)->findAll();
+        $panier=$doctrine->getRepository(Panier::class)->findBy(['userId'=>$this->getUser(),'valid'=>null]);
 
-        return new Response($twig->render('frontOff/panier/panierFrontOffice.html.twig',['panier'=>$panier]));
+        return new Response($twig->render('frontOff/panier/panierFrontOffice.html.twig',['id'=>$this->getUser()->getId(),'panier'=>$panier]));
     }
+
 
     /**
      * @Route("/valid/panier", name="Panier.valid")
      */
     public function validPanier(Request $request, Environment $twig, RegistryInterface $doctrine, ObjectManager $manager){
-        $entityManager = $this->getDoctrine()->getManager();
 
         $commande = new Commande();
         $commande->setUserId($this->getUser());
-        $etat= new Etat();
+        $etat=$manager->getRepository(Etat::class)->find(1);
         $commande->setEtatId($etat);
         $commande->setDate(new \DateTime());
-        $panier= $doctrine->getRepository(Panier::class)->findAll();
+        $panier = $doctrine->getRepository(Panier::class)->findBy(['userId'=>$this->getUser(),'valid'=>null]);
         $prixTotal=0;
+
         for ($i=0;$i<count($panier);$i++){
-            $prixTotal = $prixTotal + $panier[$i]->getPrix();
+            $prixTotal = $prixTotal + $panier[$i]->getPrix()*$panier[$i]->getQuantite();
         }
+
         $commande->setPrixTotal($prixTotal);
 
-        return new Response($twig->render('frontOff/panier/panierFrontOffice.html.twig',['panier'=>$panier, 'prixTotal'=>$commande->getPrixTotal()]));
+        $manager->persist($commande);
+        $manager->flush();
+
+        $dateCommande = $doctrine->getRepository(Commande::class)->findBy(['userId'=>$this->getUser()],array('date'=>'ASC'));
+        $dateTemp=null;
+        $panierCommande=[];
+
+        for ($i=0;$i<count($dateCommande);$i++){
+            if ($dateCommande[$i]->getDate() < $commande->getDate()) {
+                $dateTemp = $dateCommande[$i]->getDate();
+            }
+        }
+
+        for ($i = 0; $i<count($panier); $i++) {
+            if (($panier[$i]->getDateAchat() <= $commande->getDate()) and ($panier[$i]->getDateAchat() >= $dateTemp )) {
+                array_push($panierCommande,$panier[$i]);
+                $panier[$i]->setValid(true);
+            }
+        }
+
+        for ($i=0;$i<count($panierCommande);$i++) {
+            $ligneCommande = new LigneCommande();
+            $ligneCommande->setPrix($panierCommande[$i]->getPrix());
+            $ligneCommande->setQuantite($panierCommande[$i]->getQuantite());
+            $ligneCommande->setCommandeId($commande);
+            $ligneCommande->setProduitId($panierCommande[$i]->getProduitId());
+
+            $manager->persist($ligneCommande);
+            $manager->flush();
+        }
+
+        return $this->redirectToRoute('PanierValid.valid',['id'=>$commande->getId()]);
+    }
+
+
+    /**
+     * @Route("/valid/panierValid{id}", name="PanierValid.valid")
+     */
+    public function panierValid(Environment $twig, RegistryInterface $doctrine,$id){
+        $panier = $doctrine->getRepository(Panier::class)->findBy(['userId'=>$this->getUser(),'valid'=>true]);
+        $prixTotal=0;
+
+        for ($i=0;$i<count($panier);$i++){
+            $prixTotal = $prixTotal + $panier[$i]->getPrix()*$panier[$i]->getQuantite();
+        }
+
+        $commande = $doctrine->getRepository(Commande::class)->find($id);
+        $dateCommande = $doctrine->getRepository(Commande::class)->findBy(['userId'=>$this->getUser()],array('date'=>'ASC'));
+        $dateTemp=null;
+        $panierCommande=[];
+
+        for ($i=0;$i<count($dateCommande);$i++){
+            if ($dateCommande[$i]->getDate() < $commande->getDate()) {
+                $dateTemp = $dateCommande[$i]->getDate();
+            }
+        }
+
+        for ($i = 0; $i<count($panier); $i++) {
+            if (($panier[$i]->getDateAchat() <= $commande->getDate()) and ($panier[$i]->getDateAchat() >= $dateTemp )) {
+                array_push($panierCommande,$panier[$i]);
+            }
+        }
+
+        return new Response($twig->render('frontOff/panier/validPanier.html.twig',['id'=>$this->getUser()->getId(),'panier'=>$panierCommande,'prixTotal'=>$prixTotal]));
+    }
+
+
+    /**
+     * @Route("/commandes/showAll/Front",name="commande.showAllCommandes")
+     */
+    public function showAllCommandes(RegistryInterface $doctrine, Environment $twig){
+        $commandes = $doctrine->getRepository(Commande::class)->findAll();
+
+        return new Response($twig->render('frontOff/commandes/allCommandesFrontOffice.html.twig',['commandes'=>$commandes,'id'=>$this->getUser()->getId()]));
     }
 
 }

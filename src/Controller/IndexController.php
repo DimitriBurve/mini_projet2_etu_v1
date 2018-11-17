@@ -31,11 +31,11 @@ class IndexController extends Controller
 //        }
 
         $produits=$doctrine->getRepository(Produit::class)->findAll();
-        $panier=$doctrine->getRepository(Panier::class)->findAll();
+        $panier=$doctrine->getRepository(Panier::class)->findBy(['userId'=>$this->getUser(),'valid'=>null]);
         $prixTotal=0;
 //        if ($this->getUser()->getId() == $panier->getUserId())
         for ($i=0;$i<count($panier);$i++){
-            $prixTotal = $prixTotal + $panier[$i]->getPrix();
+            $prixTotal = $prixTotal + $panier[$i]->getPrix()*$panier[$i]->getQuantite();
         }
 
         if($this->isGranted('ROLE_ADMIN')) {
