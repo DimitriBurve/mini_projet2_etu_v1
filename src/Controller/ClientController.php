@@ -229,4 +229,19 @@ class ClientController extends Controller
         return new Response($twig->render('frontOff/commandes/allCommandesFrontOffice.html.twig',['commandes'=>$commandes,'id'=>$this->getUser()->getId()]));
     }
 
+
+    /**
+     * @Route("/commandes/detailsFront",name="CommandeClient.details")
+     */
+    public function showDetailsCommande(RegistryInterface $doctrine, Environment $twig){
+        $id = htmlspecialchars($_POST['commandeId']);
+
+        $lignesCommande= $doctrine->getRepository(LigneCommande::class)->findBy(['commandeId'=>$id]);
+
+        $commande = $doctrine->getRepository(Commande::class)->find($id);
+        $prixTotal = $commande->getPrixTotal();
+
+        return new Response($twig->render('frontOff/commandes/detailsCommandeFrontOffice.html.twig',['lignesCommande'=>$lignesCommande,'prixTotal'=>$prixTotal]));
+    }
+
 }

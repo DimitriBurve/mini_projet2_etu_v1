@@ -13,13 +13,15 @@
                 {% if commandes is defined %}
                     {% for commande in commandes %}
                         {% if id == commande.userId.id %}
+                            <tr>
                             <td>{{ commande.id }}</td><td>{{ commande.date |date('d/m/Y') }}</td><td>{{ commande.getPrixTotal() }}</td><td></td>
-                            <form action="{#{ path('CommandeClient.details') }#}" method="post">
+                            <form action="{{ path('CommandeClient.details') }}" method="post">
                                 <td>
                                     <input hidden name="commandeId" value="{{ commande.id }}"/>
                                     <button type="submit" class="btn btn-primary">Details</button>
                                 </td>
                             </form>
+                            </tr>
                         {% endif %}
                     {% endfor %}
                 {% else %}
