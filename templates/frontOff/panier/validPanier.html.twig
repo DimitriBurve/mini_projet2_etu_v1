@@ -11,11 +11,11 @@
             <tbody>
             {% if panier is defined %}
                 {% for produit in panier %}
-                    {% if id == produit.userId.getId() %}
+                    {#{% if id == produit.userId.getId() %}#}
                         <td>{{ produit.produitId.nom }}</td><td>{{ produit.quantite }}</td><td>{{ produit.prix}}</td>
                         <td>{{ (produit.quantite * produit.prix)|number_format(2,'.',',') }}</td><td></td>
                         </tr>
-                    {% endif %}
+                    {#{% endif %}#}
                 {% endfor %}
             {% else %}
                 <tr class="table-warning"><td>Erreur</td></tr>

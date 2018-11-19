@@ -29,8 +29,8 @@
             {% endif %}
             </tbody>
         </table>
-        {% if prixTotal is defined %}
-            <td>prix total = {{ prixTotal }} €</td>
+        {% if prixTotalValid is defined %}
+            <td>prix total = {{ prixTotalValid }} €</td>
             <p> Commande validée </p>
         {% endif %}
         {% if prixTotal is defined %}

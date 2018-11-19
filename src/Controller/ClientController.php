@@ -130,7 +130,12 @@ class ClientController extends Controller
     public function showPanierClient(Request $request, Environment $twig, RegistryInterface $doctrine, ObjectManager $manager){
         $panier=$doctrine->getRepository(Panier::class)->findBy(['userId'=>$this->getUser(),'valid'=>null]);
 
-        return new Response($twig->render('frontOff/panier/panierFrontOffice.html.twig',['id'=>$this->getUser()->getId(),'panier'=>$panier]));
+        $prixTotal=0;
+        for ($i=0;$i<count($panier);$i++){
+            $prixTotal = $prixTotal + $panier[$i]->getPrix()*$panier[$i]->getQuantite();
+        }
+
+        return new Response($twig->render('frontOff/panier/panierFrontOffice.html.twig',['id'=>$this->getUser()->getId(),'panier'=>$panier,'prixTotal'=>$prixTotal]));
     }
 
 
@@ -216,7 +221,13 @@ class ClientController extends Controller
             }
         }
 
-        return new Response($twig->render('frontOff/panier/validPanier.html.twig',['id'=>$this->getUser()->getId(),'panier'=>$panierCommande,'prixTotal'=>$prixTotal]));
+        $lignesCommande= $doctrine->getRepository(LigneCommande::class)->findBy(['commandeId'=>$id]);
+
+        $commande = $doctrine->getRepository(Commande::class)->find($id);
+        $prixTotal = $commande->getPrixTotal();
+
+
+        return new Response($twig->render('frontOff/panier/validPanier.html.twig',['id'=>$this->getUser()->getId(),'panier'=>$lignesCommande,'prixTotal'=>$prixTotal]));
     }
 
 
