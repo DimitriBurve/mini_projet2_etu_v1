@@ -197,7 +197,7 @@ class ClientController extends Controller
      * @Route("/valid/panierValid{id}", name="PanierValid.valid")
      */
     public function panierValid(Environment $twig, RegistryInterface $doctrine,$id){
-        $panier = $doctrine->getRepository(Panier::class)->findBy(['userId'=>$this->getUser(),'valid'=>true]);
+        /*$panier = $doctrine->getRepository(Panier::class)->findBy(['userId'=>$this->getUser(),'valid'=>true]);
         $prixTotal=0;
 
         for ($i=0;$i<count($panier);$i++){
@@ -219,7 +219,7 @@ class ClientController extends Controller
             if (($panier[$i]->getDateAchat() <= $commande->getDate()) and ($panier[$i]->getDateAchat() >= $dateTemp )) {
                 array_push($panierCommande,$panier[$i]);
             }
-        }
+        }*/ //à supprimer normalement
 
         $lignesCommande= $doctrine->getRepository(LigneCommande::class)->findBy(['commandeId'=>$id]);
 
