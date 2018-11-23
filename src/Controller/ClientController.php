@@ -197,32 +197,7 @@ class ClientController extends Controller
      * @Route("/valid/panierValid{id}", name="PanierValid.valid")
      */
     public function panierValid(Environment $twig, RegistryInterface $doctrine,$id){
-        /*$panier = $doctrine->getRepository(Panier::class)->findBy(['userId'=>$this->getUser(),'valid'=>true]);
-        $prixTotal=0;
-
-        for ($i=0;$i<count($panier);$i++){
-            $prixTotal = $prixTotal + $panier[$i]->getPrix()*$panier[$i]->getQuantite();
-        }
-
-        $commande = $doctrine->getRepository(Commande::class)->find($id);
-        $dateCommande = $doctrine->getRepository(Commande::class)->findBy(['userId'=>$this->getUser()],array('date'=>'ASC'));
-        $dateTemp=null;
-        $panierCommande=[];
-
-        for ($i=0;$i<count($dateCommande);$i++){
-            if ($dateCommande[$i]->getDate() < $commande->getDate()) {
-                $dateTemp = $dateCommande[$i]->getDate();
-            }
-        }
-
-        for ($i = 0; $i<count($panier); $i++) {
-            if (($panier[$i]->getDateAchat() <= $commande->getDate()) and ($panier[$i]->getDateAchat() >= $dateTemp )) {
-                array_push($panierCommande,$panier[$i]);
-            }
-        }*/ //à supprimer normalement
-
         $lignesCommande= $doctrine->getRepository(LigneCommande::class)->findBy(['commandeId'=>$id]);
-
         $commande = $doctrine->getRepository(Commande::class)->find($id);
         $prixTotal = $commande->getPrixTotal();
 
@@ -253,6 +228,25 @@ class ClientController extends Controller
         $prixTotal = $commande->getPrixTotal();
 
         return new Response($twig->render('frontOff/commandes/detailsCommandeFrontOffice.html.twig',['lignesCommande'=>$lignesCommande,'prixTotal'=>$prixTotal]));
+    }
+
+
+    /**
+     * @Route("/delete/Panier/Client", name="Panier.delete")
+     */
+    public function panierDelete(RegistryInterface $doctrine, ObjectManager $manager, Request $request){
+        $panier = $doctrine->getRepository(Panier::class)->findBy(['userId'=>$this->getUser(),'valid'=>null]);
+        $entityManager = $this->getDoctrine()->getManager();
+
+        for ($i=0;$i<count($panier);$i++){
+            $entityManager->remove($panier[$i]);
+            $produit= $doctrine->getRepository(Produit::class)->find($panier[$i]->getProduitId());
+            $produit->setStock($produit->getStock()+1);
+        }
+
+        $entityManager->flush();
+
+        return $this->redirectToRoute('panier.show');
     }
 
 }

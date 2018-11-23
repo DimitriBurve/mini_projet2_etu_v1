@@ -12,7 +12,8 @@
             {% if panier is defined %}
                 {% for produit in panier %}
                     {% if id == produit.userId.getId() %}
-                    <td>{{ produit.produitId.nom }}</td><td>{{ produit.quantite }}</td><td>{{ produit.prix}}</td>
+                    <tr>
+                        <td>{{ produit.produitId.nom }}</td><td>{{ produit.quantite }}</td><td>{{ produit.prix}}</td>
                     <td>{{ (produit.quantite * produit.prix)|number_format(2,'.',',') }}</td><td></td>
                     <form action="{{ path('ProduitClientPanier.delete') }}" method="post">
                         <input type="hidden" name="_method" value="DELETE"/>
@@ -33,12 +34,23 @@
             <td>prix total = {{ prixTotalValid }} €</td>
             <p> Commande validée </p>
         {% endif %}
-        {% if prixTotal is defined %}
+        {% if prixTotal >0 %}
+            <div class="navbar">
+            <form action="{{ path('Panier.delete') }}">
+                <button class="btn btn-primary">Supprimer</button>
+            </form>
+            <form action="{{ path('index.index') }}">
+                <button class="btn btn-primary">Continuer achats</button>
+            </form>
             <form action="{{ path('Panier.valid') }}">
                 <button class="btn btn-primary">Valider</button>
             </form>
-            {% else %}
-                <p>Pas de produits dans le panier</p>
+            </div>
+        {% else %}
+            <p>Pas de produits dans le panier</p>
+            <form action="{{ path('index.index') }}">
+                <button class="btn btn-primary">Faire des achats</button>
+            </form>
         {% endif %}
     </div>
 {% endblock %}
