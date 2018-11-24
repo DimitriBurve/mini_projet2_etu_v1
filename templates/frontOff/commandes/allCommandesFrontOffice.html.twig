@@ -2,11 +2,11 @@
 {% block body %}
 {#affiche id dtae prix et etat
     + bouton détails#}
-    <div class="col-4">
+    <div class="col-5">
         <table class="table table-bordered">
             <caption>Commandes</caption>
             <thead>
-            <tr><th>Numero commande</th><th>Date</th><th>prix total</th><th></th><th>Details</th>
+            <tr><th>Numero commande</th><th>Date</th><th>prix total</th><th>Etat Commande</th><th></th><th>Details</th>
             </tr>
             </thead>
             <tbody>
@@ -14,7 +14,7 @@
                     {% for commande in commandes %}
                         {% if id == commande.userId.id %}
                             <tr>
-                            <td>{{ commande.id }}</td><td>{{ commande.date |date('d/m/Y') }}</td><td>{{ commande.getPrixTotal() }}</td><td></td>
+                            <td>{{ commande.id }}</td><td>{{ commande.date |date('d/m/Y') }}</td><td>{{ commande.getPrixTotal() }}</td><td>{{ commande.getEtatId().getNom() }}</td><td></td>
                             <form action="{{ path('CommandeClient.details') }}" method="post">
                                 <td>
                                     <input hidden name="commandeId" value="{{ commande.id }}"/>

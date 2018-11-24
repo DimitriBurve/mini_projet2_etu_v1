@@ -10,17 +10,17 @@
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav mr-auto">
 
-            <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" id="DropdownCommandes" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <li class="nav-item dropdown active">
+                <a class="btn nav-link dropdown-toggle" id="DropdownCommandes" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     Commandes
                 </a>
                 <div class="dropdown-menu" aria-labelledby="DropdownCommandes">
-                    <a class="dropdown-item" href="{#{  path('gestion.commande.show') }#}">Gestions des commandes</a>
+                    <a class="dropdown-item" href="{{ path('Admin.gestionCommandes') }}">Gestions des commandes</a>
                 </div>
             </li>
 
             <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" id="DropdownClient" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <a class="btn nav-link dropdown-toggle" id="DropdownClient" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     Clients
                 </a>
                 <div class="dropdown-menu" aria-labelledby="DropdownStage">
@@ -30,8 +30,8 @@
 
 
 
-            <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" id="DropdownProduits" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <li class="nav-item dropdown active">
+                <a class="btn nav-link dropdown-toggle" id="DropdownProduits" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     Produits
                 </a>
                 <div class="dropdown-menu" aria-labelledby="DropdownProduits">

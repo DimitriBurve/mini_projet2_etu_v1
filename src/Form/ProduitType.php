@@ -31,7 +31,7 @@ class ProduitType extends AbstractType
                 'required' => false
             ])
             ->add('disponible', CheckboxType::class,  ['required' => false,'mapped' => true ])
-       //     ->add('stock', NumberType::class, ['required' => false])
+            ->add('stock', NumberType::class, ['required' => false])
 //            ->add('typeProduitId')
 
             ->add('typeProduitId', EntityType::class, array(
