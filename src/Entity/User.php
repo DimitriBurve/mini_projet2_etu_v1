@@ -53,6 +53,11 @@ class User implements UserInterface, \Serializable
      */
     private $codePostal;
 
+    /**
+     * @ORM\Column(type="string", length=64, nullable=true)
+     */
+    private $temp;
+
     public function __construct()
     {
         $this->isActive = true;
@@ -130,37 +135,24 @@ class User implements UserInterface, \Serializable
     }
 
 
-
-    /**
-     * @param mixed $username
-     */
     public function setUsername($username)
     {
         $this->username = $username;
         return $this;
     }
 
-    /**
-     * @param mixed $password
-     */
     public function setPassword($password)
     {
         $this->password = $password;
         return $this;
     }
 
-    /**
-     * @param mixed $email
-     */
     public function setEmail($email)
     {
         $this->email = $email;
         return $this;
     }
 
-    /**
-     * @param mixed $isActive
-     */
     public function setIsActive($isActive)
     {
         $this->isActive = $isActive;
@@ -233,6 +225,19 @@ class User implements UserInterface, \Serializable
         return $this;
     }
 
+    /**
+     * @return mixed
+     */
+    public function getTemp()
+    {
+        return $this->temp;
+    }
+
+    public function setTemp($temp): self
+    {
+        $this->temp = $temp;
+        return $this;
+    }
 
 
     public function __toString()
