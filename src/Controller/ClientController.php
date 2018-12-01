@@ -274,9 +274,38 @@ class ClientController extends Controller
 
 
     /**
-     * @Route("update/valid/coordonnees", name="Coordonnees.validUpdate")
+     * @Route("update/valid/coordonnees", name="Coordonnees.validUpdate", methods={"PUT"})
      */
-    public function validUpdateCoordonnees(){
+    public function validUpdateCoordonnees(Request $request, Environment $twig, RegistryInterface $doctrine, ObjectManager $manager){
+        $donnees['nomClient'] = htmlspecialchars($_POST['nomClient']);
+        $donnees['adresse'] = htmlspecialchars($_POST['adresse']);
+        $donnees['codePostal'] = htmlspecialchars($_POST['codePostal']);
+        $donnees['ville'] = htmlspecialchars($_POST['ville']);
+        $donnees['email'] = htmlspecialchars($_POST['email']);
 
+        $erreurs = array();
+        if (!preg_match("/^[A-Za-z]{2,}/",$donnees['nomClient'])) $erreurs['nomClient'] = "nom composé de 2 lettres minimum";
+        if (!preg_match("/^[A-Za-z]{2,}/",$donnees['ville'])) $erreurs['ville'] = "ville composé de 2 lettres minimum";
+        if (!preg_match("#^[0-9]{5}$#",$donnees['codePostal'])) $erreurs['codePostal'] = "code postal composé de 5 chiffres";
+        if (!filter_var($donnees['email'], FILTER_VALIDATE_EMAIL)) $erreurs['email']= "mail invalid";
+
+        if (!empty($erreurs)){
+            $coordonnees = $doctrine->getRepository(User::class)->find($this->getUser()->getId());
+
+            return new Response($twig->render('frontOff/coordonnees/updateCoordonnees.html.twig',['coordonnees'=>$coordonnees,'erreurs'=>$erreurs]));
+        }else{
+            $entityManager = $this->getDoctrine()->getManager();
+            $coordonneesUpdate = $entityManager->getRepository(User::class)->find($this->getUser()->getId());
+            $coordonneesUpdate->setUsername($donnees['nomClient']);
+            $coordonneesUpdate->setAdresse($donnees['adresse']);
+            $coordonneesUpdate->setCodePostal($donnees['codePostal']);
+            $coordonneesUpdate->setVille($donnees['ville']);
+            $coordonneesUpdate->setEmail($donnees['email']);
+
+            $manager->persist($coordonneesUpdate);
+            $manager->flush();
+
+            return $this->redirectToRoute('Coordonnees.show');
+        }
     }
 }
