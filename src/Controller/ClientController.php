@@ -289,6 +289,10 @@ class ClientController extends Controller
         if (!preg_match("#^[0-9]{5}$#",$donnees['codePostal'])) $erreurs['codePostal'] = "code postal composé de 5 chiffres";
         if (!filter_var($donnees['email'], FILTER_VALIDATE_EMAIL)) $erreurs['email']= "mail invalid";
 
+        if (!$this->isCsrfTokenValid('form_valid',$request->get('token'))){
+            return $this->render('error/errorToken.html.twig');
+        }
+
         if (!empty($erreurs)){
             $coordonnees = $doctrine->getRepository(User::class)->find($this->getUser()->getId());
 
