@@ -25,6 +25,8 @@ use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\Response;
 
 
+use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
+use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 use Symfony\Component\Validator\Constraints\Date;
 use Twig\Environment;                            // template TWIG
 use Symfony\Bridge\Doctrine\RegistryInterface;   // ORM Doctrine
@@ -285,8 +287,9 @@ class ClientController extends Controller
 
         $erreurs = array();
         if (!preg_match("/^[A-Za-z]{2,}/",$donnees['nomClient'])) $erreurs['nomClient'] = "nom composé de 2 lettres minimum";
-        if (!preg_match("/^[A-Za-z]{2,}/",$donnees['ville'])) $erreurs['ville'] = "ville composé de 2 lettres minimum";
+        if (!preg_match("/^[A-Za-z]{2,}/",$donnees['ville'])) $erreurs['ville'] = "ville composée de 2 lettres minimum";
         if (!preg_match("#^[0-9]{5}$#",$donnees['codePostal'])) $erreurs['codePostal'] = "code postal composé de 5 chiffres";
+        if (!preg_match("/^[A-Za-z0-9]{2,}/",$donnees['adresse'])) $erreurs['adresse'] = "adresse composée de 2 lettres minimum";
         if (!filter_var($donnees['email'], FILTER_VALIDATE_EMAIL)) $erreurs['email']= "mail invalid";
 
         if (!$this->isCsrfTokenValid('form_valid',$request->get('token'))){
@@ -296,7 +299,7 @@ class ClientController extends Controller
         if (!empty($erreurs)){
             $coordonnees = $doctrine->getRepository(User::class)->find($this->getUser()->getId());
 
-            return new Response($twig->render('frontOff/coordonnees/updateCoordonnees.html.twig',['coordonnees'=>$coordonnees,'erreurs'=>$erreurs]));
+            return new Response($twig->render('frontOff/coordonnees/updateCoordonnees.html.twig',['coordonnees'=>$coordonnees,'erreurs'=>$erreurs, 'donnees'=>$donnees]));
         }else{
             $entityManager = $this->getDoctrine()->getManager();
             $coordonneesUpdate = $entityManager->getRepository(User::class)->find($this->getUser()->getId());
@@ -310,6 +313,45 @@ class ClientController extends Controller
             $manager->flush();
 
             return $this->redirectToRoute('Coordonnees.show');
+        }
+    }
+
+
+    /**
+     * @Route("/update/coordonnees/mdp", name="Coordonnees.updateMDP")
+     */
+    public function updateMDP(Environment $twig, RegistryInterface $doctrine, AuthenticationUtils $authenticationUtils){
+
+        return new Response($twig->render('frontOff/coordonnees/editMDP.html.twig'));
+    }
+
+
+    /**
+     * @Route("/validUpdate/coordonnees/mdp", name="Coordonnees.validUpdateMDP", methods={"PUT"})
+     */
+    public function validUpdateMDP(RegistryInterface $doctrine, Environment $twig, ObjectManager $manager, UserPasswordEncoderInterface $passwordEncoder){
+        $donnees['mdp1'] = htmlspecialchars($_POST['mdp1']);
+        $donnees['mdp2'] = htmlspecialchars($_POST['mdp2']);
+
+        $erreurs = array();
+        if (!preg_match("/^[A-Za-z]{2,}/",$donnees['mdp1'])) $erreurs['mdp1'] = "nom composé de 2 lettres minimum";
+        if ($donnees['mdp2'] != $donnees['mdp1']) $erreurs['mdp2'] = "mots de passe différents rentrés";
+
+        if (!empty($erreurs)){
+
+            return new Response($twig->render('frontOff/coordonnees/editMDP.html.twig',['donnees'=>$donnees,'erreurs'=>$erreurs]));
+        }else{
+            $entityManager = $this->getDoctrine()->getManager();
+            $coordonneesUpdate = $entityManager->getRepository(User::class)->find($this->getUser()->getId());
+
+            $password = $passwordEncoder->encodePassword($this->getUser(), $donnees['mdp1']);
+            $coordonneesUpdate->setPassword($password);
+
+            $entityManager->persist($coordonneesUpdate);
+            $entityManager->flush();
+
+            return $this->redirectToRoute('Coordonnees.show');
+
         }
     }
 }

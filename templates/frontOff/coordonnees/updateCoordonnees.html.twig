@@ -6,35 +6,35 @@
             <legend>Modifier les coordonnees</legend>
             <div class="form-group">
                 <label>Nom Client :</label>
-                <input name="nomClient"  type="text"  size="18" value="{{coordonnees.getUsername()|default('')}}" class="form-control {% if erreurs.nomClient is defined %}is-invalid{% endif %}" >
+                <input name="nomClient"  type="text"  size="18" value="{% if donnees.nomClient is defined and erreurs.nomClient is not defined %}{{ donnees.nomClient }}{% else %}{{coordonnees.getUsername()|default('')}}{% endif %}" class="form-control {% if erreurs.nomClient is defined %}is-invalid{% endif %}" >
                 {% if erreurs.nomClient is defined %}
                     <div class="invalid-feedback">{{erreurs.nomClient}}</div>
                 {% endif %}
             </div>
             <div class="form-group">
                 <label>Email :</label>
-                <input name="email" type="text" value="{{ coordonnees.getEmail()|default('')}}" class="form-control {% if erreurs.email is defined  %}is-invalid{% endif %}"/>
+                <input name="email" type="text" value="{% if donnees.email is defined and erreurs.email is not defined %}{{ donnees.email }}{% else %}{{ coordonnees.getEmail()|default('')}}{% endif %}" class="form-control {% if erreurs.email is defined  %}is-invalid{% endif %}"/>
                 {% if erreurs.email is defined %}
                     <div class="invalid-feedback">{{erreurs.email}}</div>
                 {% endif %}
             </div>
             <div class="form-group">
                 <label>Adresse :</label>
-                <input name="adresse"  type="text"  size="18"  value="{{coordonnees.getAdresse()|default('')}}" class="form-control {% if erreurs.adresse is defined %}is-invalid{% endif %}">
+                <input name="adresse"  type="text"  size="18"  value="{% if donnees.adresse is defined and erreurs.adresse is not defined %}{{ donnees.adresse }}{% else %} {{coordonnees.getAdresse()|default('')}} {% endif %}" class="form-control {% if erreurs.adresse is defined %}is-invalid{% endif %}">
                 {% if erreurs.adresse is defined %}
                     <div class="invalid-feedback">{{erreurs.adresse}}</div>
                 {% endif %}
             </div>
             <div class="form-group">
                 <label>Code Postal :</label>
-                <input name="codePostal" type="text"  size="18"  value="{{coordonnees.getCodePostal()|default('')}}" class="form-control {% if erreurs.codePostal is defined %}is-invalid{% endif %}">
+                <input name="codePostal" type="text"  size="18"  value="{% if donnees.codePostal is defined and erreurs.codePostal is not defined %}{{ donnees.codePostal }}{% else %}{{coordonnees.getCodePostal()|default('')}}{% endif %}" class="form-control {% if erreurs.codePostal is defined %}is-invalid{% endif %}">
                 {% if erreurs.codePostal is defined %}
                     <div class="invalid-feedback">{{erreurs.codePostal}}</div>
                 {% endif %}
             </div>
             <div class="form-group">
                 <label>Ville :</label>
-                <input name="ville" type="text"  size="18"  value="{{coordonnees.getVille()|default('')}}" class="form-control {% if erreurs.ville is defined %}is-invalid{% endif %}">
+                <input name="ville" type="text"  size="18"  value="{% if donnees.ville is defined and erreurs.ville is not defined %}{{ donnees.ville }}{% else %}{{coordonnees.getVille()|default('')}}{% endif %}" class="form-control {% if erreurs.ville is defined %}is-invalid{% endif %}">
                 {% if erreurs.ville is defined %}
                     <div class="invalid-feedback">{{erreurs.ville}}</div>
                 {% endif %}

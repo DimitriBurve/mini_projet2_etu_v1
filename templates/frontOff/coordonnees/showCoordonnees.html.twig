@@ -9,20 +9,23 @@
             </thead>
             <tbody>
             {% if coordonnees is defined %}
-                {#{% for client in coordonnees %}#}
-                    <tr>
-                        <td>{{ coordonnees.getUsername() }}</td><td>{{ coordonnees.getEmail() }}</td>
-                        <td>{{ coordonnees.getAdresse() }} - {{ coordonnees.getCodePostal() }} {{ coordonnees.getVille() }}</td><td></td>
-                        <form action="{{ path('Coordonnees.update') }}" method="post">
-                            <td>
-                                {#<input hidden name="clientId" value="{{ coordonnees.getId() }}"/>#}
-                                <button type="submit" class="btn btn-primary">Modifier</button>
-                            </td>
-                        </form>
-                    </tr>
-                {#{% endfor %}#}
+                <tr>
+                    <td>{{ coordonnees.getUsername() }}</td><td>{{ coordonnees.getEmail() }}</td>
+                    <td>{{ coordonnees.getAdresse() }} - {{ coordonnees.getCodePostal() }} {{ coordonnees.getVille() }}</td><td></td>
+                    <form action="{{ path('Coordonnees.update') }}" method="post">
+                        <td>
+                            <button type="submit" class="btn btn-primary">Modifier</button>
+                        </td>
+                    </form>
+                </tr>
+
             {% endif %}
             </tbody>
         </table>
+        {% if coordonnees is defined %}
+            <form action="{{ path('Coordonnees.updateMDP') }}" method="post">
+                <button type="submit" class="btn btn-primary">Changer Mot de Passe</button>
+            </form>
+        {% endif %}
     </div>
 {% endblock %}

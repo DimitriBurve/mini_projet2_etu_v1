@@ -1,0 +1,24 @@
+{% extends "base.html.twig" %}
+{% block body %}
+    <div class="container">
+        <form method="post" action="{{ path('Coordonnees.validUpdateMDP') }}">
+            <input type="hidden" name="_method" value="PUT">
+            <legend>Modifier mot de passe</legend>
+            <div class="form-group">
+                <label>Nouveau Mot de Passe :</label>
+                <input name="mdp1"  type="text"  size="18" value="{% if donnees.mdp1 is defined and erreurs.mdp1 is not defined %}{{ donnees.mdp1 }}{% endif %}" class="form-control {% if erreurs.mdp2 is defined %}is-invalid{% endif %}" >
+                {% if erreurs.mdp1 is defined %}
+                    <div class="invalid-feedback">{{erreurs.mdp1}}</div>
+                {% endif %}
+            </div>
+            <div class="form-group">
+                <label>Répéter Mot de Passe :</label>
+                <input name="mdp2" type="text" value="{% if donnees.mdp2 is defined and erreurs.mdp2 is not defined %}{{ donnees.mdp2 }}{% endif %}" class="form-control {% if erreurs.mdp2 is defined  %}is-invalid{% endif %}"/>
+                {% if erreurs.mdp2 is defined %}
+                    <div class="invalid-feedback">{{erreurs.mpd2}}</div>
+                {% endif %}
+            </div>
+            <button type="submit" class="btn btn-primary">Valider</button>
+        </form>
+    </div>
+{% endblock %}
