@@ -24,6 +24,12 @@ class User implements UserInterface, \Serializable
     private $username;
 
     /**
+     * @Assert\NotBlank()
+     * @Assert\Length(max=4096)
+     */
+    private $plainPassword;
+
+    /**
      * @ORM\Column(type="string", length=64)
      */
     private $password;
@@ -58,6 +64,11 @@ class User implements UserInterface, \Serializable
      */
     private $temp;
 
+    /**
+     * @ORM\Column(type="integer", nullable=true)
+     */
+    private $cle;
+
     public function __construct()
     {
         $this->isActive = true;
@@ -82,6 +93,15 @@ class User implements UserInterface, \Serializable
         return $this->password;
     }
 
+    public function getPlainPassword()
+    {
+        return $this->plainPassword;
+    }
+
+    public function setPlainPassword($plainPassword)
+    {
+        $this->plainPassword = $plainPassword;
+    }
 
     public function eraseCredentials()
     {
@@ -239,6 +259,16 @@ class User implements UserInterface, \Serializable
         return $this;
     }
 
+    public function getCle()
+    {
+        return $this->cle;
+    }
+
+    public function setCle($cle): self
+    {
+        $this->cle = $cle;
+        return $this;
+    }
 
     public function __toString()
     {
