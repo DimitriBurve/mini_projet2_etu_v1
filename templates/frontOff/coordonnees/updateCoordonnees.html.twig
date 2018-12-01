@@ -1,4 +1,10 @@
 {% extends "base.html.twig" %}
 {% block body %}
+    <div class="container">
+        <form method="post" action="{{ path('Coordonnees.validUpdate') }}">
+            <input type="hidden" name="_method" value="PUT">
+            <legend>Modifier les coordonnees</legend>
 
+        </form>
+    </div>
 {% endblock %}
