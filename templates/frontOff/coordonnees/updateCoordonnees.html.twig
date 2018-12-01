@@ -4,7 +4,47 @@
         <form method="post" action="{{ path('Coordonnees.validUpdate') }}">
             <input type="hidden" name="_method" value="PUT">
             <legend>Modifier les coordonnees</legend>
-
+            <div class="form-group">
+                <input hidden name="id" value="{{ donnees.id }}"/>
+                <label>NomActivite :</label>
+                <input name="nomActivite"  type="text"  size="18" value="{{donnees.nomActivite|default('')}}" class="form-control {% if erreurs.nomActivite is defined %}is-invalid{% endif %}" >
+                {% if erreurs.nomActivite is defined %}
+                    <div class="invalid-feedback">{{erreurs.nomActivite}}</div>
+                {% endif %}
+            </div>
+            <div class="form-group">
+                <label>dateCreation :</label>
+                <input name="dateCreation" type="text" value="{{ donnees.dateCreation|date('d/m/Y') |default('')}}" class="form-control {% if erreurs.dateCreation is defined  %}is-invalid{% endif %}"/>
+                {% if erreurs.dateCreation is defined %}
+                    <div class="invalid-feedback">{{erreurs.dateCreation|date('d/m/Y')}}</div>
+                {% endif %}
+            </div>
+            <div class="form-group">
+                <label>coutInscription :</label>
+                <input name="coutInscription"  type="text"  size="18"  value="{{donnees.coutInscription|default('')}}" class="form-control {% if erreurs.coutInscription is defined %}is-invalid{% endif %}">
+                {% if erreurs.coutInscription is defined %}
+                    <div class="invalid-feedback">{{erreurs.coutInscription}}</div>
+                {% endif %}
+            </div>
+            <div class="form-group">
+                <label>localistion_id :</label>
+                <select name="localisation_id" class="form-control {% if erreurs.localisation_id is defined %}is-invalid{% endif %}">
+                    {% if  donnee.localisation_id is not defined or donnee.localisation_id is empty   %}
+                        <option value="">Veuillez sélectionner une localisation</option>
+                    {% endif %}
+                    {% for localisation in localisations %}
+                        <option value="{{ localisation.id }}"
+                                {% if donnee.localisation_id is defined and localisation.id == donnee.localisation_id.id %}selected{% endif %}>
+                            {{ localisation.getNomLieu() }}
+                        </option>
+                    {% endfor %}
+                </select>
+                {% if erreurs.localisationId is defined %}
+                    <div class="invalid-feedback">{{erreurs.localisationId}}</div>
+                {% endif %}
+            </div>
+            <input type="hidden" name="token" value="{{  csrf_token('form_valid') }}">
+            <button type="submit" class="btn btn-primary">modifier</button>
         </form>
     </div>
 {% endblock %}
