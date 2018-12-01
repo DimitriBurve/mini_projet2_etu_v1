@@ -12,6 +12,7 @@ use App\Entity\Commande;
 use App\Entity\Etat;
 use App\Entity\LigneCommande;
 use App\Entity\Panier;
+use App\Entity\User;
 use Doctrine\Common\Persistence\ObjectManager;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -249,4 +250,33 @@ class ClientController extends Controller
         return $this->redirectToRoute('panier.show');
     }
 
+
+    /**
+     * @Route("/coordonnees/show", name="Coordonnees.show")
+     */
+    public function coordonneesShow(RegistryInterface $doctrine, Request $request, Environment $twig){
+        $coordonnees = $doctrine->getRepository(User::class)->find($this->getUser()->getId());
+
+//        var_dump($coordonnees);
+
+        return new Response($twig->render('frontOff/coordonnees/showCoordonnees.html.twig',['coordonnees'=>$coordonnees]));
+    }
+
+
+    /**
+     * @Route("/update/coordonnees", name="Coordonnees.update")
+     */
+    public function editCoordonnees(RegistryInterface $doctrine, Request $request, Environment $twig){
+        $coordonnees = $doctrine->getRepository(User::class)->find($this->getUser()->getId());
+
+        return new Response($twig->render('frontOff/coordonnees/updateCoordonnees.html.twig',['coordonnees'=>$coordonnees]));
+    }
+
+
+    /**
+     * @Route("update/valid/coordonnees", name="Coordonnees.validUpdate")
+     */
+    public function validUpdateCoordonnees(){
+
+    }
 }

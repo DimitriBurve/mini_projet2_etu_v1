@@ -38,25 +38,61 @@ class AdminController extends Controller{
     /**
      * @Route("/admin/gestion/commandes", name="Admin.gestionCommandes")
      */
-    public function gestionCommandesAdmin(RegistryInterface $doctrine, Environment $twig){
+    public function gestionCommandesAdmin(RegistryInterface $doctrine, Environment $twig, ObjectManager $manager){
         $commandes = $doctrine->getRepository(Commande::class)->findAll();
 
-        return new Response($twig->render('backOff/Produit/clients/showAllCommandesClients.html.twig',['commandes'=>$commandes]));
+        $etat = $manager->getRepository(Etat::class)->find(2);
+
+        $expedie = $etat->getNom();
+
+        return new Response($twig->render('backOff/Produit/clients/showAllCommandesClients.html.twig',['commandes'=>$commandes, 'expedie'=>$expedie]));
     }
 
 
     /**
      * @Route("/admin/details/commande", name="Admin.CommandeClient.details")
      */
-    public function detailsAdminCommandeClient(){
-        $id=htmlspecialchars($_POST['produitId']);
+    public function detailsAdminCommandeClient(RegistryInterface $doctrine, Environment $twig, ObjectManager $manager){
+        $id=htmlspecialchars($_POST['commandeId']);
+
+        $lignesCommande= $doctrine->getRepository(LigneCommande::class)->findBy(['commandeId'=>$id]);
+
+        $commande = $doctrine->getRepository(Commande::class)->find($id);
+        $prixTotal = $commande->getPrixTotal();
+
+        $etat = $manager->getRepository(Etat::class)->find(2);
+
+        $expedie = $etat->getNom();
+
+        return new Response($twig->render('backOff/Produit/clients/showDetailsCommandeClient.html.twig',['commande'=>$commande,'prixTotal'=>$prixTotal,'lignesCommande'=>$lignesCommande, 'expedie'=>$expedie]));
     }
 
 
     /**
      * @Route("/admin/valid/commande", name="Admin.validCommande")
      */
-    public function validCommandeAdmin(){
-        $id=htmlspecialchars($_POST['produitId']);
+    public function validCommandeAdmin(RegistryInterface $doctrine, Environment $twig, ObjectManager $manager){
+        $id=htmlspecialchars($_POST['commandeId']);
+        $commande = $doctrine->getRepository(Commande::class)->find($id);
+
+        $etat = $manager->getRepository(Etat::class)->find(2);
+
+        $commande->setEtatId($etat);
+
+        $manager->flush();
+
+        return new Response($twig->render('backOff/Produit/clients/showValidCommande.html.twig',['commande'=>$commande]));
+    }
+
+
+    /**
+     * @Route("/admin/showAllClients", name="Admin.showAllClients")
+     */
+    public function showClientsAdmin(RegistryInterface $doctrine, Environment $twig){
+        $clients = $doctrine->getRepository(User::class)->findBy(['roles'=>'ROLE_CLIENT','isActive'=>1]);
+
+        $commandes = $doctrine->getRepository(Commande::class)->findAll();
+
+        return new Response($twig->render('backOff/clients/showAllClients.html.twig',['clients'=>$clients,'commandes'=>$commandes]));
     }
 }

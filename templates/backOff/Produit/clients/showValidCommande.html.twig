@@ -1,0 +1,8 @@
+{% extends "base.html.twig" %}
+{% block body %}
+    <p>Commande n°{{ commande.id }} validée.</p>
+
+    <form action="{{ path('Admin.gestionCommandes') }}">
+        <button class="btn btn-primary">Voir Commandes</button>
+    </form>
+{% endblock %}

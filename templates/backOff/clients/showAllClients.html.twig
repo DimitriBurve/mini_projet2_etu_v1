@@ -1,0 +1,34 @@
+{% extends "base.html.twig" %}
+{% block body %}
+    <div class="col-6">
+        <table class="table table-bordered">
+            <caption>Clients</caption>
+            <thead>
+            <tr><th>Id Client</th><th>Nom Client</th><th>Email</th><th>Adresse</th><th>Nombre Commandes</th><th></th><th>Opérations</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% if clients is defined %}
+                {% for client in clients %}
+                    {% set nombreCommandes = 0 %}
+                    {% for commande in commandes %}
+                        {% if commande.getUserId().getId() == client.getId() %}
+                            {% set nombreCommandes = nombreCommandes + 1 %}
+                        {% endif %}
+                    {% endfor %}
+                    <tr>
+                        <td>{{ client.getId() }}</td><td>{{ client.getUsername() }}</td><td>{{ client.getEmail() }}</td>
+                        <td>{{ client.getAdresse() }} - {{ client.getCodePostal() }} {{ client.getVille() }}</td><td>{{ nombreCommandes }}</td><td></td>
+                        <form action="{#{ path('') }#}" method="post">
+                            <td>
+                                <input hidden name="clientId" value="{{ client.getId() }}"/>
+                                <button type="submit" class="btn btn-primary">Voir commandes</button>
+                            </td>
+                        </form>
+                    </tr>
+                {% endfor %}
+            {% endif %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}

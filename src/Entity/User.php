@@ -38,6 +38,21 @@ class User implements UserInterface, \Serializable
      */
     private $isActive;
 
+    /**
+     * @ORM\Column(type="string", nullable=true)
+     */
+    private $adresse;
+
+    /**
+     * @ORM\Column(type="string", nullable=true)
+     */
+    private $ville;
+
+    /**
+     * @ORM\Column(type="integer", nullable=true, length=6)
+     */
+    private $codePostal;
+
     public function __construct()
     {
         $this->isActive = true;
@@ -175,6 +190,49 @@ class User implements UserInterface, \Serializable
     {
         return $this->isActive;
     }
+
+    /**
+     * @return mixed
+     */
+    public function getAdresse()
+    {
+        return $this->adresse;
+    }
+
+    public function setAdresse($adresse): self
+    {
+        $this->adresse = $adresse;
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getVille()
+    {
+        return $this->ville;
+    }
+
+    public function setVille($ville): self
+    {
+        $this->ville = $ville;
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getCodePostal()
+    {
+        return $this->codePostal;
+    }
+
+    public function setCodePostal($codePostal): self
+    {
+        $this->codePostal = $codePostal;
+        return $this;
+    }
+
 
 
     public function __toString()

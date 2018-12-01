@@ -18,10 +18,12 @@
                                         <button type="submit" class="btn btn-primary">Details</button>
                                     </form>
                                     <p></p>
-                                    <form action="{{ path('Admin.validCommande') }}">
-                                    <input hidden name="commandeId" value="{{ commande.id }}"/>
-                                        <button type="submit" class="btn btn-primary">Valider</button>
-                                    </form>
+                                    {% if commande.getEtatId().getNom() != expedie %}
+                                        <form action="{{ path('Admin.validCommande') }}" method="post">
+                                            <input hidden name="commandeId" value="{{ commande.id }}"/>
+                                                <button type="submit" class="btn btn-primary">Valider</button>
+                                        </form>
+                                    {% endif %}
                                 </td>
                         </tr>
                 {% endfor %}
