@@ -35,6 +35,7 @@ class RegistrationController extends AbstractController
             $user->setIsActive(false);
             $cle=md5(microtime(TRUE)*100000);
             $user->setCle($cle);
+            $user->setRoles('ROLE_CLIENT');
 
             // 4) save the User!
             $entityManager = $this->getDoctrine()->getManager();
@@ -59,7 +60,7 @@ class RegistrationController extends AbstractController
 
             $mailer->send($message);
 
-            return $this->redirectToRoute('user.index');
+            return $this->redirectToRoute('index.index');
         }
 
         return $this->render(
