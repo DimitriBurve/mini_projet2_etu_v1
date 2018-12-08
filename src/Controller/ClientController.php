@@ -36,6 +36,9 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;  // annotation security
 
+/**
+ * @Security("has_role('ROLE_CLIENT')");
+ */
 class ClientController extends Controller
 {
     /**
@@ -71,7 +74,7 @@ class ClientController extends Controller
             $panier = new Panier();
             $panier->setPrix($prix);
             $panier->setProduitId($produit);
-            $panier->setQuantite(1);
+            $panier->setQuantite($_POST['number']);
             $datePanier = new \DateTime();
             $panier->setDateAchat($datePanier);
             $panier->setUserId($this->getUser());
@@ -80,7 +83,7 @@ class ClientController extends Controller
             $manager->flush();
 
 
-            $produit->setStock($produit->getStock()-1);
+            $produit->setStock($produit->getStock()-$_POST['number']);
 
             $manager->persist($produit);
             $manager->flush();
@@ -113,13 +116,13 @@ class ClientController extends Controller
         $produit= $doctrine->getRepository(Produit::class)->find($panier->getProduitId());
         $quantite = $panier->getQuantite();
 
-        if ($panier->getQuantite()-1 != 0) {
-            $panier->setQuantite($panier->getQuantite() - 1);
+        if ($panier->getQuantite()-$_POST['number'] != 0) {
+            $panier->setQuantite($panier->getQuantite() - $_POST['number']);
         }else{
             $entityManager->remove($panier);
         }
 
-        $produit->setStock($produit->getStock()+1);
+        $produit->setStock($produit->getStock()+$_POST['number']);
 
         $entityManager->flush();
 
