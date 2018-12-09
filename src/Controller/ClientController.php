@@ -12,6 +12,7 @@ use App\Entity\Commande;
 use App\Entity\Etat;
 use App\Entity\LigneCommande;
 use App\Entity\Panier;
+use App\Entity\TypeProduit;
 use App\Entity\User;
 use Doctrine\Common\Persistence\ObjectManager;
 use Symfony\Component\Routing\Annotation\Route;
@@ -356,5 +357,14 @@ class ClientController extends Controller
             return $this->redirectToRoute('Coordonnees.show');
 
         }
+    }
+
+    /**
+     * @Route("/produits/filtres", name="Panier.filtres")
+     */
+    public function filter(Environment $twig, ObjectManager $doctrine){
+        $produits = $doctrine->getRepository(Produit::class)->findAll();
+        $typeProduits = $doctrine->getRepository(TypeProduit::class)->findAll();
+        return new Response($twig->render('frontOff/filtres/showProduits.html.twig',['produits'=>$produits,'typeProduits'=>$typeProduits]));
     }
 }
