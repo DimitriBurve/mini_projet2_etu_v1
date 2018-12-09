@@ -92,18 +92,66 @@ class ClientController extends Controller
             return $this->redirectToRoute('index.index');
 
         }else{
-            $panier->setQuantite($panier->getQuantite()+1);
+            $panier->setQuantite($panier->getQuantite()+$_POST['number']);
 
             $entityManager->flush();
 
 
-            $produit->setStock($produit->getStock()-1);
+            $produit->setStock($produit->getStock()-$_POST['number']);
 
             $manager->persist($produit);
             $manager->flush();
         }
 
         return $this->redirectToRoute('index.index');
+    }
+
+
+    /**
+     * @Route("/verifAddPanierDetailsPanier", name="Panier.verifAddDetails",methods={"POST"})
+     */
+    public function verifAddPanierDetails(Request $request, Environment $twig, RegistryInterface $doctrine, ObjectManager $manager){
+
+        $entityManager = $this->getDoctrine()->getManager();
+        $id=htmlspecialchars($_POST['produitId']);
+        $produit= $doctrine->getRepository(Produit::class)->find($id);
+        $panier=$entityManager->getRepository(Panier::class)->findOneBy(['produitId' => $id, 'userId' =>$this->getUser()->getId(),'valid'=>null]);
+        $prix=$produit->getPrix();
+
+        if (!$panier){
+            $panier = new Panier();
+            $panier->setPrix($prix);
+            $panier->setProduitId($produit);
+            $panier->setQuantite($_POST['number']);
+            $datePanier = new \DateTime();
+            $panier->setDateAchat($datePanier);
+            $panier->setUserId($this->getUser());
+
+            $manager->persist($panier);
+            $manager->flush();
+
+
+            $produit->setStock($produit->getStock()-$_POST['number']);
+
+            $manager->persist($produit);
+            $manager->flush();
+
+//            return $this->redirectToRoute('Client.produitDetails');
+
+        }else{
+            $panier->setQuantite($panier->getQuantite()+$_POST['number']);
+
+            $entityManager->flush();
+
+
+            $produit->setStock($produit->getStock()-$_POST['number']);
+
+            $manager->persist($produit);
+            $manager->flush();
+        }
+
+        return $this->clientProduitDetails($twig,$manager,$_POST['produitId']);
+//        return $this->redirectToRoute('Client.produitDetails',['id'=>$idDetails]);
     }
 
 
@@ -128,6 +176,31 @@ class ClientController extends Controller
         $entityManager->flush();
 
         return $this->redirectToRoute('index.index');
+    }
+
+
+    /**
+     * @Route("/produitClientDeletePanier/details", name="ProduitClientPanier.deleteDetails")
+     */
+    public function deleteProduitClientDetails(Request $request, Environment $twig, RegistryInterface $doctrine, ObjectManager $manager){
+        $entityManager = $this->getDoctrine()->getManager();
+        $id=htmlspecialchars($_POST['produitId']);
+        $panier=$entityManager->getRepository(Panier::class)->find($id);
+        $produit= $doctrine->getRepository(Produit::class)->find($panier->getProduitId());
+        $quantite = $panier->getQuantite();
+
+        if ($panier->getQuantite()-$_POST['number'] != 0) {
+            $panier->setQuantite($panier->getQuantite() - $_POST['number']);
+        }else{
+            $entityManager->remove($panier);
+        }
+
+        $produit->setStock($produit->getStock()+$_POST['number']);
+
+        $entityManager->flush();
+
+//        return $this->redirectToRoute('index.index');
+        return $this->clientProduitDetails($twig,$manager,$_POST['produitIdDetails']);
     }
 
 
@@ -366,5 +439,22 @@ class ClientController extends Controller
         $produits = $doctrine->getRepository(Produit::class)->findAll();
         $typeProduits = $doctrine->getRepository(TypeProduit::class)->findAll();
         return new Response($twig->render('frontOff/filtres/showProduits.html.twig',['produits'=>$produits,'typeProduits'=>$typeProduits]));
+    }
+
+
+    /**
+     * @Route("/clients/produit/details/{id}", name="Client.produitDetails")
+     */
+    public function clientProduitDetails(Environment $twig, ObjectManager $doctrine, $id){
+        $produit = $doctrine->getRepository(Produit::class)->find($id);
+//        var_dump($id);
+        $produits=$doctrine->getRepository(Produit::class)->findAll();
+        $panier=$doctrine->getRepository(Panier::class)->findBy(['userId'=>$this->getUser(),'valid'=>null]);
+        $prixTotal=0;
+//        if ($this->getUser()->getId() == $panier->getUserId())
+        for ($i=0;$i<count($panier);$i++){
+            $prixTotal = $prixTotal + $panier[$i]->getPrix()*$panier[$i]->getQuantite();
+        }
+        return new Response($twig->render('frontOff/detailsProduit.html.twig',['id'=>$this->getUser()->getId(),'produits'=>$produits, 'panier'=>$panier,'prixTotal'=>$prixTotal, 'produit'=>$produit]));
     }
 }

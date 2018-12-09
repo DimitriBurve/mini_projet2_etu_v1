@@ -1,0 +1,89 @@
+{% extends "base.html.twig" %}
+{% block body %}
+
+    <h1> Projet 2 web : site de vente Espace client </h1>
+
+    <div class="row">
+
+        <div class="col-7">
+
+            <table class="table table-bordered">
+                <caption>Produits</caption>
+                <thead>
+                <tr><th>nom</th><th>stock</th><th>type</th><th>prix</th><th>photo</th><th>Ajouter</th>
+                </tr>
+                </thead>
+
+
+                <tbody>
+
+                {% if produit is defined %}
+                        <tr>
+                            <td>{{produit.nom}}</td>
+                            <td>{{produit.stock}}</td><td>{{produit.typeProduitId.libelle | default('pas de type')}}</td><td>{{ produit.prix }} €</td>
+                            <td><img style="width:40px;height:40px" src="{{asset('images/')}}{{produit.photo}}" alt="image de {{produit.nom}}" ></td>
+                            <form method="post" action="{{ path('Panier.verifAddDetails') }}">
+                                <td>
+                                    {% if produit.stock > 0 %}
+                                        <input hidden name="produitId" value="{{ produit.id }}"/>
+                                        {#<label>nombre produits à ajouter</label>
+                                        <input type="button" value="-" onclick="decrease()">#}
+                                        {#<input name="nbProduitSelect" #}{#value="#}{##}{#{{ nbProduitsSelect }}#}{##}{#"#}{# value="initial" id="nbProduitsSelect" type="text" size="1"/>#}
+                                        {#<input type="text" id="Counter" name="Score" value="1" size="1"/>
+                                        <input type="button" value="+" onclick="increase()">#}
+                                        <input name="number" type="number" step="1" value="1" min="1" max="{{ produit.stock }}">
+                                        <button type="submit" class="btn btn-primary">ajouter</button>
+                                    {% else %}
+                                        produit indisponible
+                                    {% endif %}
+                                </td>
+                            </form>
+                        </tr>
+
+                {% else %}
+                    <tr class="table-warning"><td>Pas de Produit</td></tr>
+                {% endif %}
+                </tbody>
+            </table>
+        </div>
+
+        <div class="col-5">
+            <table class="table table-bordered">
+                <caption>Panier</caption>
+                <thead>
+                <tr><th>Nom du Produit</th><th>quantite</th><th>prix</th><th>prix total</th><th></th><th>supprimer</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% if panier is defined %}
+                    {% for produit in panier %}
+                        {% if id == produit.userId.getId() %}
+                            <td>{{ produit.produitId.nom }}</td><td>{{ produit.quantite }}</td><td>{{ produit.prix}}</td>
+                            <td>{{ (produit.quantite * produit.prix)|number_format(2,'.',',') }}</td><td></td>
+                            <form action="{{ path('ProduitClientPanier.deleteDetails') }}" method="post">
+                                <input type="hidden" name="_method" value="DELETE"/>
+                                <td>
+                                    <input hidden name="produitId" value="{{ produit.getId() }}"/>
+                                    <input hidden name="produitIdDetails" value="{{ produit.produitId.id }}">
+                                    <input name="number" type="number" step="1" value="1" min="1" max="{{ produit.quantite }}">
+                                    <button type="submit" class="btn btn-primary">Supprimer</button>
+                                </td>
+                            </form>
+                            </tr>
+                        {% endif %}
+                    {% endfor %}
+                {% else %}
+                    <tr class="table-warning"><td>Pas de Produits dans le panier</td></tr>
+                {% endif %}
+                </tbody>
+            </table>
+            <td>Prix Total : {{ prixTotal }} €</td>
+            {% if prixTotal > 0 %}
+                <form action="{{ path('Panier.valid') }}">
+                    <button class="btn btn-primary">Valider</button>
+                </form>
+            {% endif %}
+        </div>
+    </div>
+
+{% endblock %}

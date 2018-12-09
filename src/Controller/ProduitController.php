@@ -92,5 +92,4 @@ class ProduitController extends Controller
         }
         return new Response($twig->render('backOff/Produit/formProduit.html.twig',['form'=>$form->createView()]));
     }
-
 }

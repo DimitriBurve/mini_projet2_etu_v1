@@ -15,10 +15,8 @@
             <form method="post" action="{{ path('Panier.filtres') }}">
                 <select Id='recherche' name='recherche' >
                     {% for typeProduit in typeProduits %}
-                        <OPTION name={{typeProduit.libelle}} value='{{ typeProduit.libelle}}'>{{ typeProduit.libelle }}
-							{% endfor %}
-
-
+						<OPTION name={{typeProduit.libelle}} value='{{ typeProduit.libelle}}'>{{ typeProduit.libelle }}</OPTION>
+					{% endfor %}
                 </select> 
                 <input class="btn btn-primary btn-lg square" type="submit" value="Tester" />
             </form>
@@ -32,8 +30,7 @@
 						<img style="width:40px;height:40px" src="{{asset('images/')}}{{produit.photo}}" alt="image de {{produit.nom}}" >
 					</td>
 					<td>
-						<a href="{{ path('produit.edit', {id: produit.id}) }}"  class="btn btn-primary m-1 p-1">modifier</a>
-						<a href="{{ path('produit.delete', {id: produit.id}) }}"  class="btn btn-primary m-1 p-1">supprimer</a>
+						<a href="{{ path('Client.produitDetails', {id: produit.id}) }}"  class="btn btn-primary m-1 p-1">details</a>
 					</td>
 				</tr>
                 {% endif %}
